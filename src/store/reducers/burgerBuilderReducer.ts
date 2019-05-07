@@ -44,7 +44,8 @@ export default function BBReducer(state = initialState, action:any) {
           cheese: action.ingredients.cheese,
           meat: action.ingredients.meat
         },
-        error: false
+        error: false,
+        totalPrice: initialState.totalPrice
       };
     case actionTypes.FETCH_INGREDIENTS_FAILED:
       return {

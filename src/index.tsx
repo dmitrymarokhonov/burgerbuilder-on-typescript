@@ -7,7 +7,7 @@ import thunk from "redux-thunk"
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import burgerBuilderReducer from "./store/reducers/BBReducer"
+import burgerBuilderReducer from "./store/reducers/burgerBuilderReducer"
 
 declare global {
   interface Window {

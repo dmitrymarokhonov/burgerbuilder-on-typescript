@@ -3,5 +3,5 @@ export {
   removeIngredient,
   initIngredients,
   fetchIngredientsFailed
-} from "./bbActions";
+} from "./burgerBuilderActions";
 export { purchaseBurgerStart, purchaseBurger, purchaseBurgerFail } from "./order";
