@@ -39,6 +39,7 @@ export interface IBurgerBuilderProps {
   onIngredientAdded: any
   onIngredientRemoved: any
   onInitIngredients: any
+  onInitPurchase: any
   history: History
 }
 
@@ -144,14 +145,26 @@ export interface ICheckoutProps {
   ings: any
   history: History
   match: any
+  onInitPurchase: any
+  purchased: boolean
 }
 
+interface IOrder {
+  id: string
+  ingredients: any
+  price: number
+}
 export interface IOrdersProps {
   history: History
+  onFetchOrders: any
+  orders: Array<IOrder>
+  loading: boolean
 }
 export interface IOrdersState {
-  orders: Array<any>
-  loading: boolean
+  order: {
+    orders: Array<Object>
+    loading: boolean
+  }
 }
 
 export interface IReducerState {

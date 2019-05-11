@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from "react"
 import { connect } from "react-redux"
 import axios from "../../../axios-orders"
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler"
@@ -91,7 +91,7 @@ class ContactData extends React.Component<IContactDataProps, IContactDataState> 
             { value: 'cheapest', displayValue: 'Cheapest' }
           ]
         },
-        value: '',
+        value: 'fastest',
         validation: {},
         valid: true
       }
@@ -103,15 +103,18 @@ class ContactData extends React.Component<IContactDataProps, IContactDataState> 
   orderHandler = (event: any) => {
     event.preventDefault();
     this.setState({ loading: true });
+
     const formData = {};
     for (let formElementIdentifier in this.state.orderForm) {
       formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
     }
+
     const order = {
       ingredients: this.props.ings,
       price: this.props.price,
       orderData: formData
     }
+    
     axios.post('/orders.json', order)
       .then(response => {
         this.setState({ loading: false });
@@ -217,9 +220,9 @@ class ContactData extends React.Component<IContactDataProps, IContactDataState> 
 
 const mapStateToProps = (state: any) => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice,
-    loading: state.loading
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    loading: state.order.loading
   };
 };
 

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import {connect} from "react-redux"
+import * as React from "react"
+import { connect } from "react-redux"
 import axios from "../../axios-orders"
 import Burger from "../../components/Burger/Burger"
 import BuildControls from "../../components/Burger/BuildControls/BuildControls"
@@ -7,53 +7,54 @@ import Modal from "../../components/UI/Modal/Modal"
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary"
 import Spinner from "../../components/UI/Spinner/Spinner"
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler"
-import * as BBActions from "../../store/actions"
-import {IBurgerBuilderState, IBurgerBuilderProps} from "../../interfaces"
+import * as actions from "../../store/actions"
+import { IBurgerBuilderState, IBurgerBuilderProps } from "../../interfaces"
 
-export interface BurgerBuilderProps {
-  
-}
- 
-export interface BurgerBuilderState {
-  
-}
- 
+export interface BurgerBuilderProps { }
+
+export interface BurgerBuilderState { }
+
 class BurgerBuilder extends React.Component<IBurgerBuilderProps, IBurgerBuilderState> {
-  state:IBurgerBuilderState = {
-    purchasing: false  }
-    componentDidMount() {
-      console.log(this.props.onInitIngredients());
-      this.props.onInitIngredients();
-  
-    }
-  
-    updatePurchaseState(ingredients:any) {
-      const sum = Object.keys(ingredients)
-        .map(igKey => {
-          return ingredients[igKey];
-        })
-        .reduce((sum, el) => sum + el, 0);
-      return sum > 0;
-    }
-  
-    purchaseHandler = () => {
-      this.setState({ purchasing: true });
-    };
-  
-    purchaseCancelHandler = () => {
-      this.setState({ purchasing: false });
-      return this.state.purchasing;
-    };
-  
-    purchaseContinueHandler = () => {
-      this.props.history.push("/checkout");
-    };
-  render() { 
+  state: IBurgerBuilderState = {
+    purchasing: false
+  };
+
+  componentDidMount() {
+    this.props.onInitIngredients();
+  }
+
+  updatePurchaseState(ingredients: any) {
+    const sum = Object.keys(ingredients)
+      .map(igKey => {
+        return ingredients[igKey];
+      })
+      .reduce((sum, el) => sum + el, 0);
+    return sum > 0;
+  }
+
+  purchaseHandler = () => {
+    this.setState({ purchasing: true });
+  };
+
+  purchaseCancelHandler = () => {
+    this.setState({ purchasing: false });
+    return this.state.purchasing;
+  };
+
+  purchaseContinueHandler = () => {
+    this.props.onInitPurchase();
+    this.props.history.push("/checkout");
+  };
+  render() {
     const disabledInfo = {
       ...this.props.ings
     };
     let orderSummary = null;
-    let burger = this.props.error ? <p>Ingredients can&#39;t be loaded! {console.log(this.props.ings)}</p> : <Spinner />;
+    let burger = this.props.error ? (
+      <p>Ingredients can&#39;t be loaded! {console.log(this.props.ings)}</p>
+    ) : (
+        <Spinner />
+      );
 
     for (let key in disabledInfo) {
       disabledInfo[key] = disabledInfo[key] <= 0;
@@ -81,35 +82,38 @@ class BurgerBuilder extends React.Component<IBurgerBuilderProps, IBurgerBuilderS
           price={this.props.price}
         />
       );
-
     }
-    return ( 
+    return (
       <React.Fragment>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler ? true : false}>
+        <Modal
+          show={this.state.purchasing}
+          modalClosed={this.purchaseCancelHandler ? true : false}
+        >
           {orderSummary}
         </Modal>
         {burger}
       </React.Fragment>
-     );
+    );
   }
 }
 
-const mapStateToProps = (state:any) => {
+const mapStateToProps = (state: any) => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice,
-    error: state.error
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    error: state.burgerBuilder.error
   };
 };
 
-const mapDispatchToProps = (dispatch:any) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    onIngredientAdded: (ingName:string) => dispatch(BBActions.addIngredient(ingName)),
-    onIngredientRemoved: (ingName:string) => dispatch(BBActions.removeIngredient(ingName)),
-    onInitIngredients: () => dispatch(BBActions.initIngredients())
+    onIngredientAdded: (ingName: string) => dispatch(actions.addIngredient(ingName)),
+    onIngredientRemoved: (ingName: string) => dispatch(actions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actions.initIngredients()),
+    onInitPurchase: () => dispatch(actions.purchaseInit())
   };
 };
- 
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
