@@ -1,43 +1,46 @@
-import * as actionTypes from "../actions/actionTypes"
-import {IReducerState, IReducerIngredientPrices} from "../../interfaces"
+import * as actionTypes from "../actions/actionTypes";
+import { updateObject } from "../utility";
+import { IReducerState, IReducerIngredientPrices } from "../../interfaces";
 
-
-const initialState:IReducerState = {
+const initialState: IReducerState = {
   ingredients: null,
   totalPrice: 4,
-  error: false,
+  error: false
 };
 
-const INGREDIENT_PRICES:IReducerIngredientPrices = {
+const INGREDIENT_PRICES: IReducerIngredientPrices = {
   salad: 0.5,
   cheese: 0.4,
   meat: 1.3,
   bacon: 1.7
 };
 
-export default function BBReducer(state = initialState, action:any) {
+export default function BBReducer(state = initialState, action: any) {
   switch (action.type) {
     case actionTypes.ADD_INGREDIENT:
-      return {
+      const updatedIngredient = {
+        [action.ingredientName]: state.ingredients[action.ingredientName] + 1
+      };
+      const updatedIngredients = updateObject(state.ingredients, updatedIngredient);
+      const updatedState = {
         ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] + 1
-        },
+        ingredients: updatedIngredients,
         totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName]
       };
+      return updateObject(state, updatedState);
     case actionTypes.REMOVE_INGREDIENT:
-      return {
-        ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredientName]: state.ingredients[action.ingredientName] - 1
-        },
-        totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName]
+      const updatedIng = {
+        [action.ingredientName]: state.ingredients[action.ingredientName] - 1
       };
-    case actionTypes.SET_INGREDIENTS:
-      return {
+      const updatedIngs = updateObject(state.ingredients, updatedIng);
+      const updState = {
         ...state,
+        ingredients: updatedIngs,
+        totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName]
+      };
+      return updateObject(state, updState);
+    case actionTypes.SET_INGREDIENTS:
+      return updateObject(state, {
         ingredients: {
           salad: action.ingredients.salad,
           bacon: action.ingredients.bacon,
@@ -46,12 +49,9 @@ export default function BBReducer(state = initialState, action:any) {
         },
         error: false,
         totalPrice: initialState.totalPrice
-      };
+      });
     case actionTypes.FETCH_INGREDIENTS_FAILED:
-      return {
-        ...state,
-        error: true
-      };
+      return updateObject(state, { error: true });
     default:
       return state;
   }
